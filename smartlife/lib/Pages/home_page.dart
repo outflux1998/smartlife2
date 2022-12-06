@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:smartlife/auth.dart';
@@ -12,26 +13,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final dRef = FirebaseDatabase.instance.ref();
-  late DatabaseReference databaseReference;
-  // setData() {
-  //   dRef.child("meals").set({'id': "01", 'name': "ibad", "contract": "0000"});
-  // }
+  FirebaseDatabase database = FirebaseDatabase.instance;
+  DatabaseReference ref = FirebaseDatabase.instance.ref();
 
-  showData() async {
-    final ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child('meals').get();
-    if (snapshot.exists) {
-      print(snapshot.value);
-    } else {
-      print('No data available.');
-    }
-  }
+  // showData() async {
+  //   final snapshot = await ref.child('meals').get();
+  //   if (snapshot.exists) {
+  //     print(snapshot.value);
+  //     return snapshot.value;
+  //   } else {
+  //     print('No data available.');
+  //     return '';
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
-    databaseReference = dRef;
   }
 
   final User? user = Auth().currentUser;
@@ -104,28 +102,51 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: _title(),
           backgroundColor: Colors.white,
-          actions: [TextButton(onPressed: showData, child: Text("Show Data"))],
+          actions: [
+            TextButton(onPressed: _signOutButton, child: _signOutButton())
+          ],
         ),
         body: Container(
           height: double.infinity,
           width: double.infinity,
           padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // FirebaseAnimatedList(
-              //     shrinkWrap: true,
-              //     query: databaseReference,
-              //     itemBuilder: (BuildContext context, DataSnapshot snapshot,
-              //         Animation animation, int index) {
-              //       return Text(snapshot.value.);
-              //     })
-              // _userId(),
-              // _signOutButton(),
-              // _mealsListItem(),
-            ],
-          ),
+          child: FirebaseAnimatedList(
+              query: ref.child('meals'),
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                  Animation animation, int index) {
+                Map name = snapshot.value as Map;
+                if (snapshot.exists) {
+                  return Text(snapshot.value.toString());
+                } else {
+                  print('No data available.');
+                  return Text('');
+                }
+                return Text(name.toString());
+              }),
+          // child: Column(
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: <StatefulWidget>[
+          //     FirebaseAnimatedList(
+          //         query: ref.child('meals/breakfast'),
+          //         itemBuilder: (BuildContext context, DataSnapshot snapshot,
+          //             Animation animation, int index) {
+          //           Map name = snapshot.value as Map;
+          //           if (snapshot.exists) {
+          //             return Text(snapshot.value.toString());
+          //           } else {
+          //             print('No data available.');
+          //             return Text('');
+          //           }
+          //           return Text(name.toString());
+          //         })
+          //     // _userId(),
+          //
+          //     // _signOutButton(),
+          //     // _mealsListItem(),
+          //   ],
+          // ),
         ));
   }
 }
