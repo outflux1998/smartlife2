@@ -87,6 +87,7 @@ class _addnoteState extends State<addnote> {
                   "title": titleInput.text,
                   "description": descriptionInput.text,
                   "calories": caloriesInput.text,
+                  "time": timeInput.text
                 }).asStream();
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (_) => HomePage()));

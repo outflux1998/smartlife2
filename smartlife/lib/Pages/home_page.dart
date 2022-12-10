@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   // }
   TextEditingController titleInput = TextEditingController();
 
-  TextEditingController descInput = TextEditingController();
+  TextEditingController dcaloriesInput = TextEditingController();
   var l;
   var g;
   var k;
@@ -130,7 +130,8 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, snapshot, animation, index) {
           var v = snapshot.value.toString();
 
-          g = v.replaceAll(RegExp("{|}|description: |title: |calories:"), "");
+          g = v.replaceAll(
+              RegExp("{|}|description: |title: |time: |calories:"), "");
           g.trim();
           print(g);
 
@@ -246,9 +247,9 @@ class _HomePageState extends State<HomePage> {
 // Only update the name, leave the age and address!
     await ref1.update({
       "title": titleInput.text,
-      "subtitle": descInput.text,
+      "calories": dcaloriesInput.text,
     });
     titleInput.clear();
-    descInput.clear();
+    dcaloriesInput.clear();
   }
 }
