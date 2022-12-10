@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:smartlife/auth.dart';
+
+import 'addnote.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,24 +17,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  FirebaseDatabase database = FirebaseDatabase.instance;
-  DatabaseReference ref = FirebaseDatabase.instance.ref();
-
-  // showData() async {
-  //   final snapshot = await ref.child('meals').get();
-  //   if (snapshot.exists) {
-  //     print(snapshot.value);
-  //     return snapshot.value;
-  //   } else {
-  //     print('No data available.');
-  //     return '';
-  //   }
-  // }
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  String displayText = 'Referições';
+  final fb = FirebaseDatabase.instance;
 
   final User? user = Auth().currentUser;
   Future<void> signOut() async {
@@ -38,22 +26,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _title() {
-    return const Text(
-      'SMARTLIFE',
-      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-    );
-  }
-
-  Widget _mealsListItem() {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(10),
-      height: 110,
-      color: Colors.lightGreen,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text('Name'), SizedBox(height: 5)]),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: const [
+        Text(
+          'SMARTLIFE',
+          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 
@@ -64,89 +44,211 @@ class _HomePageState extends State<HomePage> {
   Widget _signOutButton() {
     return ElevatedButton(
       onPressed: signOut,
-      child: const Text('Sair'),
+      child: const Text('Logout'),
     );
   }
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _activeListeners();
+  // }
+
+  // void _activeListeners() {
+  //   _dailySpecialStream = ref.child("meals/mealsList/").onValue.listen((event) {
+  //     final data = event.snapshot.value;
+  //     final meal = Meal.fromRTDB(data);
+  //     setState(() {
+  //       displayText = meal.MealDisplayText();
+  //     });
+  //   });
+  // }
+  TextEditingController titleInput = TextEditingController();
+
+  TextEditingController descInput = TextEditingController();
+  var l;
+  var g;
+  var k;
+
   @override
   Widget build(BuildContext context) {
+    final ref = fb.ref().child('meals');
+
     return Scaffold(
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20),
-            child: GNav(
-              gap: 8,
-              backgroundColor: Colors.white,
-              color: Colors.black,
-              activeColor: Colors.black,
-              tabBackgroundColor: Colors.grey.shade300,
-              padding: EdgeInsets.all(16),
-              tabs: const [
-                GButton(
-                  icon: Icons.home,
-                  text: 'Home',
-                ),
-                GButton(
-                  icon: Icons.favorite_border,
-                  text: 'Dieta',
-                ),
-                GButton(
-                  icon: Icons.settings,
-                  text: 'Conta',
-                ),
-              ],
-            ),
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20),
+          child: GNav(
+            gap: 8,
+            backgroundColor: Colors.white,
+            color: Colors.black,
+            activeColor: Colors.green,
+            tabBackgroundColor: Colors.grey.shade300,
+            padding: EdgeInsets.all(16),
+            tabs: const [
+              GButton(
+                icon: Icons.home,
+                text: 'Home',
+              ),
+              // GButton(
+              //   icon: Icons.favorite_border,
+              //   text: 'Dieta',
+              // ),
+              GButton(
+                icon: Icons.person,
+                text: 'Conta',
+              ),
+            ],
           ),
         ),
-        appBar: AppBar(
-          title: _title(),
-          backgroundColor: Colors.white,
-          actions: [
-            TextButton(onPressed: _signOutButton, child: _signOutButton())
-          ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => addnote(),
+            ),
+          );
+        },
+        child: Icon(
+          Icons.add,
         ),
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          child: FirebaseAnimatedList(
-              query: ref.child('meals'),
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                  Animation animation, int index) {
-                Map name = snapshot.value as Map;
-                if (snapshot.exists) {
-                  return Text(snapshot.value.toString());
-                } else {
-                  print('No data available.');
-                  return Text('');
-                }
-                return Text(name.toString());
-              }),
-          // child: Column(
-          //   crossAxisAlignment: CrossAxisAlignment.center,
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: <StatefulWidget>[
-          //     FirebaseAnimatedList(
-          //         query: ref.child('meals/breakfast'),
-          //         itemBuilder: (BuildContext context, DataSnapshot snapshot,
-          //             Animation animation, int index) {
-          //           Map name = snapshot.value as Map;
-          //           if (snapshot.exists) {
-          //             return Text(snapshot.value.toString());
-          //           } else {
-          //             print('No data available.');
-          //             return Text('');
-          //           }
-          //           return Text(name.toString());
-          //         })
-          //     // _userId(),
-          //
-          //     // _signOutButton(),
-          //     // _mealsListItem(),
-          //   ],
-          // ),
-        ));
+      ),
+      appBar: AppBar(
+        title: _title(),
+        backgroundColor: Colors.white,
+        actions: [
+          TextButton(onPressed: _signOutButton, child: _signOutButton())
+        ],
+      ),
+      body: FirebaseAnimatedList(
+        query: ref,
+        shrinkWrap: true,
+        itemBuilder: (context, snapshot, animation, index) {
+          var v = snapshot.value.toString();
+
+          g = v.replaceAll(RegExp("{|}|description: |title: |calories:"), "");
+          g.trim();
+          print(g);
+
+          l = g.split(',');
+
+          return GestureDetector(
+            // onTap: () {
+            //   setState(() {
+            //     k = snapshot.key;
+            //   });
+            //   showDialog(
+            //     context: context,
+            //     builder: (ctx) => AlertDialog(
+            //       title: Container(
+            //         decoration: BoxDecoration(border: Border.all()),
+            //         child: TextField(
+            //           controller: second,
+            //           textAlign: TextAlign.center,
+            //           decoration: InputDecoration(
+            //             hintText: 'title',
+            //           ),
+            //         ),
+            //       ),
+            //       content: Container(
+            //         decoration: BoxDecoration(border: Border.all()),
+            //         child: TextField(
+            //           controller: third,
+            //           textAlign: TextAlign.center,
+            //           decoration: InputDecoration(
+            //             hintText: 'sub title',
+            //           ),
+            //         ),
+            //       ),
+            //       actions: <Widget>[
+            //         MaterialButton(
+            //           onPressed: () {
+            //             Navigator.of(ctx).pop();
+            //           },
+            //           color: Color.fromARGB(255, 0, 22, 145),
+            //           child: Text(
+            //             "Cancel",
+            //             style: TextStyle(
+            //               color: Colors.white,
+            //             ),
+            //           ),
+            //         ),
+            //         MaterialButton(
+            //           onPressed: () async {
+            //             await upd();
+            //             Navigator.of(ctx).pop();
+            //           },
+            //           color: Color.fromARGB(255, 0, 22, 145),
+            //           child: Text(
+            //             "Update",
+            //             style: TextStyle(
+            //               color: Colors.white,
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   );
+            // },
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  tileColor: Colors.grey[300],
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Color.fromARGB(255, 255, 0, 0),
+                    ),
+                    onPressed: () {
+                      ref.child(snapshot.key!).remove();
+                    },
+                  ),
+                  title: Text(
+                    l[2],
+                    // 'dd',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    l[1] + ' calorias',
+                    // 'dd',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  upd() async {
+    DatabaseReference ref1 =
+        FirebaseDatabase.instance.ref("meals/mealsList//$k");
+
+// Only update the name, leave the age and address!
+    await ref1.update({
+      "title": titleInput.text,
+      "subtitle": descInput.text,
+    });
+    titleInput.clear();
+    descInput.clear();
   }
 }
