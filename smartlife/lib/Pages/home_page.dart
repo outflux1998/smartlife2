@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:smartlife/auth.dart';
 
-import 'addnote.dart';
+import 'addmeal.dart';
+import 'personal_info.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,8 +20,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String displayText = 'Referições';
   final fb = FirebaseDatabase.instance;
-
   final User? user = Auth().currentUser;
+
   Future<void> signOut() async {
     await Auth().signOut();
   }
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _userId() {
-    return Text(user?.email ?? 'User email');
+    return Text(user?.displayName ?? 'User email');
   }
 
   Widget _signOutButton() {
@@ -73,6 +74,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final ref = fb.ref().child('meals');
+    int selectedIndex = 0;
 
     return Scaffold(
       bottomNavigationBar: Container(
@@ -86,7 +88,7 @@ class _HomePageState extends State<HomePage> {
             activeColor: Colors.green,
             tabBackgroundColor: Colors.grey.shade300,
             padding: EdgeInsets.all(16),
-            tabs: const [
+            tabs: [
               GButton(
                 icon: Icons.home,
                 text: 'Home',
@@ -98,8 +100,22 @@ class _HomePageState extends State<HomePage> {
               GButton(
                 icon: Icons.person,
                 text: 'Conta',
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => personal_info(),
+                    ),
+                  );
+                },
               ),
             ],
+            selectedIndex: selectedIndex,
+            onTabChange: (index) {
+              setState(() {
+                selectedIndex = index;
+              });
+            },
           ),
         ),
       ),
@@ -109,7 +125,7 @@ class _HomePageState extends State<HomePage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => addnote(),
+              builder: (_) => addmeal(),
             ),
           );
         },
