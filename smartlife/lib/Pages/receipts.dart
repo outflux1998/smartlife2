@@ -155,8 +155,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                 onTap: () => {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ReceiptDetailsPage(
-                            selectedMeal: widget.selectedMeal,
-                            selectedIndex: index,
+                            selectedReceipted: receipts as dynamic,
                           )))
                 },
                 child: ListTile(

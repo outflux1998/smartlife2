@@ -72,6 +72,19 @@ class _HomePageState extends State<HomePage> {
   var g;
   var k;
 
+  String translateMeal(String currentMeal) {
+    switch (currentMeal) {
+      case 'lunch':
+        return 'Almoço';
+
+      case 'breakfast':
+        return 'Café da manhã';
+
+      default:
+        return "";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ref = fb.ref().child('meals');
@@ -152,6 +165,7 @@ class _HomePageState extends State<HomePage> {
               itemCount: (meals as dynamic).length,
               itemBuilder: (BuildContext context, int index) {
                 String currentMeal = (meals as dynamic).keys.toList()[index];
+
                 return GestureDetector(
                   onTap: () => {
                     Navigator.of(context).push(MaterialPageRoute(
@@ -160,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                             )))
                   },
                   child: ListTile(
-                    title: Text(currentMeal.toString()),
+                    title: Text(translateMeal(currentMeal).toString()),
                   ),
                 );
               });

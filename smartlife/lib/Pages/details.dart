@@ -1,5 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:smartlife/auth.dart';
@@ -7,19 +5,15 @@ import 'package:smartlife/pages/addmeal.dart';
 import 'package:smartlife/pages/personal_info.dart';
 
 class ReceiptDetailsPage extends StatefulWidget {
-  const ReceiptDetailsPage(
-      {required this.selectedIndex, super.key, required this.selectedMeal});
+  const ReceiptDetailsPage({super.key, required this.selectedReceipted});
 
-  final selectedIndex;
-  final selectedMeal;
+  final selectedReceipted;
 
   @override
   State<ReceiptDetailsPage> createState() => _ReceiptDetailsPageState();
 }
 
 class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
-  final fb = FirebaseDatabase.instance;
-
   Future<void> signOut() async {
     await Auth().signOut();
   }
@@ -45,9 +39,6 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    var datails = fb.ref().child(
-        'meals/mealsList/${widget.selectedMeal}/${widget.selectedIndex}');
-
     return Scaffold(
         bottomNavigationBar: Container(
           color: Colors.white,
@@ -106,14 +97,16 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
             TextButton(onPressed: _signOutButton, child: _signOutButton())
           ],
         ),
-        body: FirebaseAnimatedList(
-            query: fb.ref().child(
-                'meals/mealsList/${widget.selectedMeal}/${widget.selectedIndex}'),
-            defaultChild: const Center(child: CircularProgressIndicator()),
-            shrinkWrap: true,
-            itemBuilder: (context, snapshot, animation, index) {
-              Object? receipt = snapshot.value;
-              return Text(receipt.toString());
-            }));
+        body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('${widget.selectedReceipted}'),
+          const SizedBox(
+            height: 20,
+          ),
+          Text('Nome: ${widget.selectedReceipted['nome']}'),
+          Text('Descrição: ${widget.selectedReceipted['description']}'),
+          Text('Tempo de preparo: ${widget.selectedReceipted['tempo']}'),
+          Text(
+              'Quantidade de calorias: ${widget.selectedReceipted['calories']}')
+        ]));
   }
 }
