@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:smartlife/Pages/receipts.dart';
 import 'package:smartlife/auth.dart';
 
 import 'addmeal.dart';
@@ -141,116 +142,126 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: FirebaseAnimatedList(
-        query: ref,
+        query: fb.ref().child('meals/'),
+        defaultChild: const Center(child: CircularProgressIndicator()),
         shrinkWrap: true,
         itemBuilder: (context, snapshot, animation, index) {
-          var v = snapshot.value.toString();
-
-          g = v.replaceAll(
-              RegExp("{|}|description: |title: |time: |calories:"), "");
-          g.trim();
-          print(g);
-
-          l = g.split(',');
-
-          return GestureDetector(
-            // onTap: () {
-            //   setState(() {
-            //     k = snapshot.key;
-            //   });
-            //   showDialog(
-            //     context: context,
-            //     builder: (ctx) => AlertDialog(
-            //       title: Container(
-            //         decoration: BoxDecoration(border: Border.all()),
-            //         child: TextField(
-            //           controller: second,
-            //           textAlign: TextAlign.center,
-            //           decoration: InputDecoration(
-            //             hintText: 'title',
-            //           ),
-            //         ),
-            //       ),
-            //       content: Container(
-            //         decoration: BoxDecoration(border: Border.all()),
-            //         child: TextField(
-            //           controller: third,
-            //           textAlign: TextAlign.center,
-            //           decoration: InputDecoration(
-            //             hintText: 'sub title',
-            //           ),
-            //         ),
-            //       ),
-            //       actions: <Widget>[
-            //         MaterialButton(
-            //           onPressed: () {
-            //             Navigator.of(ctx).pop();
-            //           },
-            //           color: Color.fromARGB(255, 0, 22, 145),
-            //           child: Text(
-            //             "Cancel",
-            //             style: TextStyle(
-            //               color: Colors.white,
-            //             ),
-            //           ),
-            //         ),
-            //         MaterialButton(
-            //           onPressed: () async {
-            //             await upd();
-            //             Navigator.of(ctx).pop();
-            //           },
-            //           color: Color.fromARGB(255, 0, 22, 145),
-            //           child: Text(
-            //             "Update",
-            //             style: TextStyle(
-            //               color: Colors.white,
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   );
-            // },
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                      color: Colors.white,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+          Object? meals = snapshot.value;
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: (meals as dynamic).length,
+              itemBuilder: (BuildContext context, int index) {
+                String currentMeal = (meals as dynamic).keys.toList()[index];
+                return GestureDetector(
+                  onTap: () => {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ReceiptsPage(
+                              selectedMeal: currentMeal,
+                            )))
+                  },
+                  child: ListTile(
+                    title: Text(currentMeal.toString()),
                   ),
-                  tileColor: Colors.grey[300],
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Color.fromARGB(255, 255, 0, 0),
-                    ),
-                    onPressed: () {
-                      ref.child(snapshot.key!).remove();
-                    },
-                  ),
-                  title: Text(
-                    l[2],
-                    // 'dd',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    l[1] + ' calorias',
-                    // 'dd',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
+                );
+              });
+          // GestureDetector(
+          //   // onTap: () {
+          //   //   setState(() {
+          //   //     k = snapshot.key;
+          //   //   });
+          //   //   showDialog(
+          //   //     context: context,
+          //   //     builder: (ctx) => AlertDialog(
+          //   //       title: Container(
+          //   //         decoration: BoxDecoration(border: Border.all()),
+          //   //         child: TextField(
+          //   //           controller: second,
+          //   //           textAlign: TextAlign.center,
+          //   //           decoration: InputDecoration(
+          //   //             hintText: 'title',
+          //   //           ),
+          //   //         ),
+          //   //       ),
+          //   //       content: Container(
+          //   //         decoration: BoxDecoration(border: Border.all()),
+          //   //         child: TextField(
+          //   //           controller: third,
+          //   //           textAlign: TextAlign.center,
+          //   //           decoration: InputDecoration(
+          //   //             hintText: 'sub title',
+          //   //           ),
+          //   //         ),
+          //   //       ),
+          //   //       actions: <Widget>[
+          //   //         MaterialButton(
+          //   //           onPressed: () {
+          //   //             Navigator.of(ctx).pop();
+          //   //           },
+          //   //           color: Color.fromARGB(255, 0, 22, 145),
+          //   //           child: Text(
+          //   //             "Cancel",
+          //   //             style: TextStyle(
+          //   //               color: Colors.white,
+          //   //             ),
+          //   //           ),
+          //   //         ),
+          //   //         MaterialButton(
+          //   //           onPressed: () async {
+          //   //             await upd();
+          //   //             Navigator.of(ctx).pop();
+          //   //           },
+          //   //           color: Color.fromARGB(255, 0, 22, 145),
+          //   //           child: Text(
+          //   //             "Update",
+          //   //             style: TextStyle(
+          //   //               color: Colors.white,
+          //   //             ),
+          //   //           ),
+          //   //         ),
+          //   //       ],
+          //   //     ),
+          //   //   );
+          //   // },
+          //   child: Container(
+          //     child: Padding(
+          //       padding: const EdgeInsets.all(8.0),
+          //       child: ListTile(
+          //         shape: RoundedRectangleBorder(
+          //           side: const BorderSide(
+          //             color: Colors.white,
+          //           ),
+          //           borderRadius: BorderRadius.circular(10),
+          //         ),
+          //         tileColor: Colors.grey[300],
+          //         trailing: IconButton(
+          //           icon: const Icon(
+          //             Icons.delete,
+          //             color: Color.fromARGB(255, 255, 0, 0),
+          //           ),
+          //           onPressed: () {
+          //             ref.child(snapshot.key!).remove();
+          //           },
+          //         ),
+          //         title: Text(
+          //           l[2],
+          //           // 'dd',
+          //           style: const TextStyle(
+          //             fontSize: 24,
+          //             fontWeight: FontWeight.bold,
+          //           ),
+          //         ),
+          //         subtitle: Text(
+          //           l[1] + ' calorias',
+          //           // 'dd',
+          //           style: const TextStyle(
+          //             fontSize: 18,
+          //             fontWeight: FontWeight.bold,
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // );
         },
       ),
     );

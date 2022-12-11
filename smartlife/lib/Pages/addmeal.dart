@@ -26,8 +26,10 @@ class _addmealState extends State<addmeal> {
                 child: Text('Não'),
               ),
               ElevatedButton(
-                  onPressed: () => Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (_) => HomePage())),
+                  onPressed: () => Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => HomePage()),
+                      (Route<dynamic> route) => false),
                   child: Text('Sim'))
             ],
           ));
