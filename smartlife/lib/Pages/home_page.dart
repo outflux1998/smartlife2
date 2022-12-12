@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:realm/realm.dart';
 import 'package:smartlife/Pages/receipts.dart';
 import 'package:smartlife/auth.dart';
 
-import 'addmeal.dart';
+import '../schemas/user_schema.dart';
+import '../services/user_service.dart';
 import 'personal_info.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,7 +21,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String displayText = 'Referições';
   final fb = FirebaseDatabase.instance;
-  final User? user = Auth().currentUser;
 
   Future<void> signOut() async {
     await Auth().signOut();
@@ -35,36 +34,14 @@ class _HomePageState extends State<HomePage> {
           'SMARTLIFE',
           style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
         ),
+        Icon(
+          Icons.energy_savings_leaf,
+          color: Colors.green,
+        ),
       ],
     );
   }
 
-  Widget _userId() {
-    return Text(user?.displayName ?? 'User email');
-  }
-
-  Widget _signOutButton() {
-    return ElevatedButton(
-      onPressed: signOut,
-      child: const Text('Logout'),
-    );
-  }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _activeListeners();
-  // }
-
-  // void _activeListeners() {
-  //   _dailySpecialStream = ref.child("meals/mealsList/").onValue.listen((event) {
-  //     final data = event.snapshot.value;
-  //     final meal = Meal.fromRTDB(data);
-  //     setState(() {
-  //       displayText = meal.MealDisplayText();
-  //     });
-  //   });
-  // }
   TextEditingController titleInput = TextEditingController();
 
   TextEditingController dcaloriesInput = TextEditingController();
@@ -85,73 +62,72 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Widget MealImg(String currentMeal) {
+    switch (currentMeal) {
+      case 'lunch':
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.network(
+              width: 74,
+              height: 63,
+              fit: BoxFit.cover,
+              'https://images2.nogueirense.com.br/wp-content/uploads/2022/10/design-sem-nome-3-1666189173.png'),
+        );
+
+      case 'breakfast':
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.network(
+              width: 74,
+              height: 63,
+              fit: BoxFit.cover,
+              'https://images.pexels.com/photos/103124/pexels-photo-103124.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+        );
+
+      default:
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.network(
+              width: 74,
+              height: 63,
+              fit: BoxFit.cover,
+              'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ref = fb.ref().child('meals');
-    int selectedIndex = 0;
+    final newUser = UserRealmService();
+    newUser.openRealm();
+
+    late RealmResults<UserRealm> myData;
+
+    myData = newUser.getItems();
 
     return Scaffold(
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20),
-          child: GNav(
-            gap: 8,
-            backgroundColor: Colors.white,
-            color: Colors.black,
-            activeColor: Colors.green,
-            tabBackgroundColor: Colors.grey.shade300,
-            padding: EdgeInsets.all(16),
-            tabs: [
-              GButton(
-                icon: Icons.home,
-                text: 'Home',
-              ),
-              // GButton(
-              //   icon: Icons.favorite_border,
-              //   text: 'Dieta',
-              // ),
-              GButton(
-                icon: Icons.person,
-                text: 'Conta',
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => personal_info(),
-                    ),
-                  );
-                },
-              ),
-            ],
-            selectedIndex: selectedIndex,
-            onTabChange: (index) {
-              setState(() {
-                selectedIndex = index;
-              });
-            },
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => addmeal(),
-            ),
-          );
-        },
-        child: Icon(
-          Icons.add,
-        ),
-      ),
       appBar: AppBar(
         title: _title(),
+        centerTitle: true,
         backgroundColor: Colors.white,
         actions: [
-          TextButton(onPressed: _signOutButton, child: _signOutButton())
+          Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 0),
+              child: GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => personal_info(),
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: 20.0,
+                  backgroundImage: NetworkImage(
+                      "https://img.freepik.com/fotos-gratis/foto-interna-de-uma-jovem-alegre-mulher-de-cabelos-escuros-mantendo-a-mao-levantada-sobre-o-peito-e-rindo-alegremente-com-os-olhos-fechados-isolada-sobre-uma-parede-azul_295783-11258.jpg?w=900&t=st=1664675420~exp=1664676020~hmac=ebc7b87a6407a4567e87db1bec85309777fa53503b28e8d8eca16b7889f1a570"),
+                ),
+              )),
+          // TextButton(onPressed: _signOutButton, child: _signOutButton())
         ],
       ),
       body: FirebaseAnimatedList(
@@ -160,122 +136,101 @@ class _HomePageState extends State<HomePage> {
         shrinkWrap: true,
         itemBuilder: (context, snapshot, animation, index) {
           Object? meals = snapshot.value;
-          return ListView.builder(
-              shrinkWrap: true,
-              itemCount: (meals as dynamic).length,
-              itemBuilder: (BuildContext context, int index) {
-                String currentMeal = (meals as dynamic).keys.toList()[index];
-
-                return GestureDetector(
-                  onTap: () => {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ReceiptsPage(
-                              selectedMeal: currentMeal,
-                            )))
-                  },
-                  child: ListTile(
-                    title: Text(translateMeal(currentMeal).toString()),
-                  ),
-                );
-              });
-          // GestureDetector(
-          //   // onTap: () {
-          //   //   setState(() {
-          //   //     k = snapshot.key;
-          //   //   });
-          //   //   showDialog(
-          //   //     context: context,
-          //   //     builder: (ctx) => AlertDialog(
-          //   //       title: Container(
-          //   //         decoration: BoxDecoration(border: Border.all()),
-          //   //         child: TextField(
-          //   //           controller: second,
-          //   //           textAlign: TextAlign.center,
-          //   //           decoration: InputDecoration(
-          //   //             hintText: 'title',
-          //   //           ),
-          //   //         ),
-          //   //       ),
-          //   //       content: Container(
-          //   //         decoration: BoxDecoration(border: Border.all()),
-          //   //         child: TextField(
-          //   //           controller: third,
-          //   //           textAlign: TextAlign.center,
-          //   //           decoration: InputDecoration(
-          //   //             hintText: 'sub title',
-          //   //           ),
-          //   //         ),
-          //   //       ),
-          //   //       actions: <Widget>[
-          //   //         MaterialButton(
-          //   //           onPressed: () {
-          //   //             Navigator.of(ctx).pop();
-          //   //           },
-          //   //           color: Color.fromARGB(255, 0, 22, 145),
-          //   //           child: Text(
-          //   //             "Cancel",
-          //   //             style: TextStyle(
-          //   //               color: Colors.white,
-          //   //             ),
-          //   //           ),
-          //   //         ),
-          //   //         MaterialButton(
-          //   //           onPressed: () async {
-          //   //             await upd();
-          //   //             Navigator.of(ctx).pop();
-          //   //           },
-          //   //           color: Color.fromARGB(255, 0, 22, 145),
-          //   //           child: Text(
-          //   //             "Update",
-          //   //             style: TextStyle(
-          //   //               color: Colors.white,
-          //   //             ),
-          //   //           ),
-          //   //         ),
-          //   //       ],
-          //   //     ),
-          //   //   );
-          //   // },
-          //   child: Container(
-          //     child: Padding(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child: ListTile(
-          //         shape: RoundedRectangleBorder(
-          //           side: const BorderSide(
-          //             color: Colors.white,
-          //           ),
-          //           borderRadius: BorderRadius.circular(10),
-          //         ),
-          //         tileColor: Colors.grey[300],
-          //         trailing: IconButton(
-          //           icon: const Icon(
-          //             Icons.delete,
-          //             color: Color.fromARGB(255, 255, 0, 0),
-          //           ),
-          //           onPressed: () {
-          //             ref.child(snapshot.key!).remove();
-          //           },
-          //         ),
-          //         title: Text(
-          //           l[2],
-          //           // 'dd',
-          //           style: const TextStyle(
-          //             fontSize: 24,
-          //             fontWeight: FontWeight.bold,
-          //           ),
-          //         ),
-          //         subtitle: Text(
-          //           l[1] + ' calorias',
-          //           // 'dd',
-          //           style: const TextStyle(
-          //             fontSize: 18,
-          //             fontWeight: FontWeight.bold,
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // );
+          return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                      child: Text(
+                        "Home",
+                        style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 15.0),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.18,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                'Olá ${myData[0].name}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 35,
+                                    color: Color.fromRGBO(0, 33, 64, 1)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                        child: Text(
+                          "Refeições",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w900, fontSize: 20),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 15.0),
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: (meals as dynamic).length,
+                            itemBuilder: (BuildContext context, int index) {
+                              String currentMeal =
+                                  (meals as dynamic).keys.toList()[index];
+                              return GestureDetector(
+                                onTap: () => {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ReceiptsPage(
+                                            selectedMeal: currentMeal,
+                                          )))
+                                },
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Card(
+                                        shadowColor:
+                                            Color.fromRGBO(0, 33, 64, 1),
+                                        color: Color.fromRGBO(214, 228, 232, 1),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: ListTile(
+                                            leading: MealImg(currentMeal),
+                                            title: Text(
+                                                style: const TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Color.fromRGBO(
+                                                        0, 33, 64, 1),
+                                                    fontWeight: FontWeight.w600,
+                                                    overflow:
+                                                        TextOverflow.clip),
+                                                translateMeal(currentMeal)
+                                                    .toString()),
+                                          ),
+                                        ),
+                                      )
+                                    ]),
+                              );
+                            })),
+                  ]));
         },
       ),
     );

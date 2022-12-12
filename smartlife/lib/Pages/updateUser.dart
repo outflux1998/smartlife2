@@ -1,24 +1,24 @@
 import 'dart:math';
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:smartlife/Pages/personal_info.dart';
 
 import 'home_page.dart';
+import '../services/user_service.dart';
 
-class addmeal extends StatefulWidget {
-  const addmeal({Key? key, this.selectedMeal}) : super(key: key);
-
-  final selectedMeal;
-
+class updateUser extends StatefulWidget {
   @override
-  _addmealState createState() => _addmealState();
+  _updateUserState createState() => _updateUserState();
 }
 
-class _addmealState extends State<addmeal> {
-  TextEditingController titleInput = TextEditingController();
-  TextEditingController descriptionInput = TextEditingController();
+class _updateUserState extends State<updateUser> {
+  final newUser = UserRealmService();
+
+  TextEditingController nameInput = TextEditingController();
+  TextEditingController ageInput = TextEditingController();
   TextEditingController caloriesInput = TextEditingController();
-  TextEditingController timeInput = TextEditingController();
+  TextEditingController weightInput = TextEditingController();
+  TextEditingController heightInput = TextEditingController();
 
   Future<bool?> showWarning(BuildContext context) async => showDialog<bool>(
       context: context,
@@ -38,14 +38,8 @@ class _addmealState extends State<addmeal> {
             ],
           ));
 
-  final fb = FirebaseDatabase.instance;
   @override
   Widget build(BuildContext context) {
-    print(widget.selectedMeal);
-    var rng = Random();
-    var id = rng.nextInt(10000);
-    final ref = fb.ref().child('meals/mealsList/${widget.selectedMeal}/$id');
-
     return WillPopScope(
         onWillPop: () async {
           final shouldPopAlert = await showWarning(context);
@@ -56,7 +50,7 @@ class _addmealState extends State<addmeal> {
           appBar: AppBar(
             leading: BackButton(),
             elevation: 0,
-            title: Text("Adicione uma nova receita"),
+            title: Text("Atualize seu perfil"),
             backgroundColor: Colors.green,
           ),
           body: Container(
@@ -68,9 +62,9 @@ class _addmealState extends State<addmeal> {
                 Container(
                   decoration: BoxDecoration(border: Border.all()),
                   child: TextField(
-                    controller: titleInput,
+                    controller: nameInput,
                     decoration: InputDecoration(
-                      hintText: 'Título',
+                      hintText: 'Nome',
                     ),
                   ),
                 ),
@@ -80,9 +74,9 @@ class _addmealState extends State<addmeal> {
                 Container(
                   decoration: BoxDecoration(border: Border.all()),
                   child: TextField(
-                    controller: descriptionInput,
+                    controller: ageInput,
                     decoration: InputDecoration(
-                      hintText: 'Descrição',
+                      hintText: 'Idade',
                     ),
                   ),
                 ),
@@ -94,7 +88,7 @@ class _addmealState extends State<addmeal> {
                   child: TextField(
                     controller: caloriesInput,
                     decoration: InputDecoration(
-                      hintText: 'Calorias',
+                      hintText: 'Calorias diárias',
                     ),
                   ),
                 ),
@@ -104,26 +98,47 @@ class _addmealState extends State<addmeal> {
                 Container(
                   decoration: BoxDecoration(border: Border.all()),
                   child: TextField(
-                    controller: timeInput,
+                    controller: heightInput,
                     decoration: InputDecoration(
-                      hintText: 'Tempo',
+                      hintText: 'Altura',
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(border: Border.all()),
+                  child: TextField(
+                    controller: weightInput,
+                    decoration: InputDecoration(
+                      hintText: 'Peso',
                     ),
                   ),
                 ),
                 MaterialButton(
                   color: Colors.green,
                   onPressed: () {
-                    ref.set({
-                      "name": titleInput.text,
-                      "description": descriptionInput.text,
-                      "calories": caloriesInput.text,
-                      "time": timeInput.text
-                    }).asStream();
-                    Navigator.pushReplacement(
-                        context, MaterialPageRoute(builder: (_) => HomePage()));
+                    //TODO: Usar Realm to add...
+
+                    newUser.openRealm();
+                    var myData = newUser.getItems();
+                    print(myData[0].id);
+
+                    newUser.updateUser(
+                        myData[0],
+                        myData[0].id,
+                        nameInput.text,
+                        ageInput.text,
+                        caloriesInput.text,
+                        weightInput.text,
+                        heightInput.text);
+
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => personal_info()));
                   },
                   child: Text(
-                    "Salvar",
+                    "salvar",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
