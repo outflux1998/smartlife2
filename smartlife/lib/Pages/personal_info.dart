@@ -49,6 +49,18 @@ class _personal_infoState extends State<personal_info> {
     );
   }
 
+  double bmr(peso, altura, idade) {
+    return (10 * peso) + (6.25 * altura) - (5 * idade) + 5;
+  }
+
+  double tdee(peso, altura, idade) {
+    return bmr(peso, altura, idade) * 1.55;
+  }
+
+  double totalCalories(peso, altura, idade) {
+    return tdee(peso, altura, idade);
+  }
+
   @override
   Widget build(BuildContext context) {
     final newUser = UserRealmService();
@@ -63,6 +75,10 @@ class _personal_infoState extends State<personal_info> {
     var peso = int.parse(myData[0].weight);
 
     var respIMC = myData.isEmpty ? 25.000 : peso / (pow(altura, 2));
+
+    var respCalories = totalCalories(peso, altura, int.parse(myData[0].age));
+
+    print(respCalories);
 
     return Scaffold(
       appBar: AppBar(
@@ -134,8 +150,15 @@ class _personal_infoState extends State<personal_info> {
                         fontSize: 20,
                         color: Colors.grey),
                   ),
+                  // Text(
+                  //   'Calorias diárias: ${myData[0].calories} kcals',
+                  //   style: TextStyle(
+                  //       fontWeight: FontWeight.w600,
+                  //       fontSize: 20,
+                  //       color: Colors.grey),
+                  // ),
                   Text(
-                    'Calorias diárias: ${myData[0].calories} kcals',
+                    'Caloria diária ideal: ${respCalories.toStringAsPrecision(5)} kcals',
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 20,

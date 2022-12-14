@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smartlife/auth.dart';
 
+import 'home_page.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -18,10 +20,17 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> signInWithEmailAndPassword() async {
     try {
-      await Auth().signInWithEmailAndPassword(
-        email: _controllerEmail.text,
-        password: _controllerPassword.text,
-      );
+      await Auth()
+          .signInWithEmailAndPassword(
+            email: _controllerEmail.text,
+            password: _controllerPassword.text,
+          )
+          .then((value) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              ));
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;

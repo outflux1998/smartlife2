@@ -44,6 +44,25 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
     );
   }
 
+  String translateMeal(String currentMeal) {
+    switch (currentMeal) {
+      case 'lunch':
+        return 'Almoço';
+
+      case 'breakfast':
+        return 'Café da manhã';
+
+      case 'snaks':
+        return 'Lanche';
+
+      case 'dinner':
+        return 'Jantar';
+
+      default:
+        return "";
+    }
+  }
+
   TextEditingController titleInput = TextEditingController();
   TextEditingController caloriesInput = TextEditingController();
   var l;
@@ -104,21 +123,14 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                 const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-                child: Text(
-                  "Receitas",
-                  style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 16),
-                ),
-              ),
-              const Padding(
+              Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20),
                   child: Text(
-                    "Pratos",
-                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20),
+                    "Receitas - ${translateMeal(widget.selectedMeal) ?? ''}",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 20,
+                        color: Color.fromRGBO(0, 33, 64, 1)),
                   )),
               Expanded(
                 child: FirebaseAnimatedList(

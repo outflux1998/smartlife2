@@ -108,15 +108,15 @@ class _updateUserState extends State<updateUser> {
                     ),
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(),
-                  child: TextField(
-                    controller: caloriesInput,
-                    decoration: const InputDecoration(
-                      hintText: 'Calorias diárias',
-                    ),
-                  ),
-                ),
+                // Container(
+                //   decoration: BoxDecoration(),
+                //   child: TextField(
+                //     controller: caloriesInput,
+                //     decoration: const InputDecoration(
+                //       hintText: 'Calorias diárias',
+                //     ),
+                //   ),
+                // ),
                 Container(
                   decoration: BoxDecoration(),
                   child: TextField(

@@ -57,6 +57,12 @@ class _HomePageState extends State<HomePage> {
       case 'breakfast':
         return 'Café da manhã';
 
+      case 'snaks':
+        return 'Lanche';
+
+      case 'dinner':
+        return 'Jantar';
+
       default:
         return "";
     }
@@ -84,12 +90,22 @@ class _HomePageState extends State<HomePage> {
               'https://images.pexels.com/photos/103124/pexels-photo-103124.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
         );
 
+      case 'snaks':
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.network(
+              width: 200,
+              height: 100,
+              fit: BoxFit.cover,
+              'https://s2.glbimg.com/qGxgSCAGc-qoSdDKLbJn75tMmAw=/smart/e.glbimg.com/og/ed/f/original/2021/12/22/maksim-shutov-pua1on18jno-unsplash.jpg'),
+        );
+
       default:
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Image.network(
-              width: 74,
-              height: 63,
+              width: 200,
+              height: 100,
               fit: BoxFit.cover,
               'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'),
         );
