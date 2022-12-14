@@ -68,8 +68,8 @@ class _HomePageState extends State<HomePage> {
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Image.network(
-              width: 74,
-              height: 63,
+              width: 200,
+              height: 100,
               fit: BoxFit.cover,
               'https://images2.nogueirense.com.br/wp-content/uploads/2022/10/design-sem-nome-3-1666189173.png'),
         );
@@ -78,8 +78,8 @@ class _HomePageState extends State<HomePage> {
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Image.network(
-              width: 74,
-              height: 63,
+              width: 200,
+              height: 100,
               fit: BoxFit.cover,
               'https://images.pexels.com/photos/103124/pexels-photo-103124.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
         );
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (context) => personal_info(),
                   ),
                 ),
-                child: CircleAvatar(
+                child: const CircleAvatar(
                   radius: 20.0,
                   backgroundImage: NetworkImage(
                       "https://img.freepik.com/fotos-gratis/foto-interna-de-uma-jovem-alegre-mulher-de-cabelos-escuros-mantendo-a-mao-levantada-sobre-o-peito-e-rindo-alegremente-com-os-olhos-fechados-isolada-sobre-uma-parede-azul_295783-11258.jpg?w=900&t=st=1664675420~exp=1664676020~hmac=ebc7b87a6407a4567e87db1bec85309777fa53503b28e8d8eca16b7889f1a570"),
@@ -216,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                                             leading: MealImg(currentMeal),
                                             title: Text(
                                                 style: const TextStyle(
-                                                    fontSize: 20.0,
+                                                    fontSize: 25.0,
                                                     color: Color.fromRGBO(
                                                         0, 33, 64, 1),
                                                     fontWeight: FontWeight.w600,

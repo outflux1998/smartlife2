@@ -39,6 +39,33 @@ class _addmealState extends State<addmeal> {
           ));
 
   final fb = FirebaseDatabase.instance;
+
+  Widget _title() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: const [
+        Text(
+          'SMARTLIFE',
+          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+        ),
+        Icon(
+          Icons.energy_savings_leaf,
+          color: Colors.green,
+        ),
+      ],
+    );
+  }
+
+  Widget _PageTitle() {
+    return const Padding(
+        padding: EdgeInsets.only(bottom: 20.0, left: 20.00, right: 20.00),
+        child: Text(
+          'Novo Prato',
+          style: TextStyle(
+              color: Colors.green, fontSize: 25, fontWeight: FontWeight.w800),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.selectedMeal);
@@ -49,66 +76,72 @@ class _addmealState extends State<addmeal> {
     return WillPopScope(
         onWillPop: () async {
           final shouldPopAlert = await showWarning(context);
-          print('back');
           return shouldPopAlert ?? false;
         },
         child: Scaffold(
           appBar: AppBar(
-            leading: BackButton(),
+            leading: const BackButton(
+              color: Colors.green,
+            ),
             elevation: 0,
-            title: Text("Adicione uma nova receita"),
-            backgroundColor: Colors.green,
+            centerTitle: true,
+            title: _title(),
+            backgroundColor: Colors.white,
           ),
           body: Container(
+            height: double.infinity,
+            width: double.infinity,
+            padding:
+                const EdgeInsets.only(top: 20.00, left: 20.00, right: 20.00),
             child: Column(
               children: [
-                SizedBox(
+                _PageTitle(),
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
                   child: TextField(
                     controller: titleInput,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Título',
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
                   child: TextField(
                     controller: descriptionInput,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Descrição',
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
                   child: TextField(
                     controller: caloriesInput,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Calorias',
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
                   child: TextField(
                     controller: timeInput,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Tempo',
                     ),
                   ),
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 MaterialButton(
                   color: Colors.green,
@@ -122,7 +155,7 @@ class _addmealState extends State<addmeal> {
                     Navigator.pushReplacement(
                         context, MaterialPageRoute(builder: (_) => HomePage()));
                   },
-                  child: Text(
+                  child: const Text(
                     "Salvar",
                     style: TextStyle(
                       color: Colors.white,

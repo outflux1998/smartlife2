@@ -1,10 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:smartlife/Pages/personal_info.dart';
 
-import 'home_page.dart';
 import '../services/user_service.dart';
+import 'home_page.dart';
 
 class updateUser extends StatefulWidget {
   @override
@@ -38,41 +36,71 @@ class _updateUserState extends State<updateUser> {
             ],
           ));
 
+  Widget _title() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: const [
+        Text(
+          'SMARTLIFE',
+          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+        ),
+        Icon(
+          Icons.energy_savings_leaf,
+          color: Colors.green,
+        ),
+      ],
+    );
+  }
+
+  Widget _PageTitle() {
+    return const Padding(
+        padding: EdgeInsets.only(bottom: 20.0, left: 20.00, right: 20.00),
+        child: Text(
+          'Atualize seu perfil',
+          style: TextStyle(
+              color: Colors.green, fontSize: 25, fontWeight: FontWeight.w800),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
           final shouldPopAlert = await showWarning(context);
-          print('back');
           return shouldPopAlert ?? false;
         },
         child: Scaffold(
           appBar: AppBar(
-            leading: BackButton(),
+            leading: const BackButton(
+              color: Colors.green,
+            ),
             elevation: 0,
-            title: Text("Atualize seu perfil"),
-            backgroundColor: Colors.green,
+            centerTitle: true,
+            title: _title(),
+            backgroundColor: Colors.white,
           ),
           body: Container(
+            height: double.infinity,
+            width: double.infinity,
+            padding:
+                const EdgeInsets.only(top: 20.00, left: 20.00, right: 20.00),
             child: Column(
               children: [
-                SizedBox(
+                _PageTitle(),
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
+                  decoration: BoxDecoration(),
                   child: TextField(
                     controller: nameInput,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Nome',
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
+                  decoration: BoxDecoration(),
                   child: TextField(
                     controller: ageInput,
                     decoration: InputDecoration(
@@ -80,41 +108,35 @@ class _updateUserState extends State<updateUser> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
+                  decoration: BoxDecoration(),
                   child: TextField(
                     controller: caloriesInput,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Calorias diárias',
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
+                  decoration: BoxDecoration(),
                   child: TextField(
                     controller: heightInput,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Altura',
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
                 Container(
-                  decoration: BoxDecoration(border: Border.all()),
+                  decoration: BoxDecoration(),
                   child: TextField(
                     controller: weightInput,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Peso',
                     ),
                   ),
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 MaterialButton(
                   color: Colors.green,
@@ -137,8 +159,8 @@ class _updateUserState extends State<updateUser> {
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (_) => personal_info()));
                   },
-                  child: Text(
-                    "salvar",
+                  child: const Text(
+                    "Salvar",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
