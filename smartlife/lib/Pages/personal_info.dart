@@ -108,7 +108,7 @@ class _personal_infoState extends State<personal_info> {
                 tag: 136265974,
                 child: CircleAvatar(
                   radius: MediaQuery.of(context).size.width / 8,
-                  backgroundImage: NetworkImage(Contantes.imageUrlProfile),
+                  backgroundImage: NetworkImage(Contantes.animalUser),
                 ),
               ),
             ),
